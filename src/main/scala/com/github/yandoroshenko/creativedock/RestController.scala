@@ -7,7 +7,9 @@ import org.http4s._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.blaze.BlazeBuilder
 
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.{Duration, _}
 
 object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
 
@@ -25,6 +27,9 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
           case _ =>
             NotFound("NOT FOUND")
         }
+      case PUT -> Root / name / "messages" / message =>
+        // TODO Consider running future in the background and just returning 201 CREATED
+        Await.result(Producer.send(ListMessages(), name, message).map(_ => Created()), Duration(RequestTimeoutMs, MILLISECONDS))
     }
   }
 
