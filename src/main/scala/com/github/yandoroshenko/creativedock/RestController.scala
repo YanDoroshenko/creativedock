@@ -1,5 +1,5 @@
-package com.github.yandoroshenko.creativedock
 
+package com.github.yandoroshenko.creativedock
 
 import cats.effect.IO
 import fs2.StreamApp
@@ -12,6 +12,10 @@ import scala.concurrent.duration.{Duration, _}
 import scala.concurrent.{Await, Future}
 
 object RestController extends StreamApp[IO] with Http4sDsl[IO] {
+
+  private final val Address = "127.0.0.1"
+  private final val Port = 8080
+  private final val RequestTimeoutMs = 1000
 
   val service: HttpService[IO] = HttpService[IO] {
     case GET -> Root / "groups" / name / "info" =>
@@ -26,12 +30,12 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] {
           .map {
             case Some(r) => Ok(r.value())
             case _ => NotFound()
-          }, Duration(1000, MILLISECONDS))
+          }, Duration(RequestTimeoutMs, MILLISECONDS))
   }
 
   def stream(args: List[String], requestShutdown: IO[Unit]): fs2.Stream[IO, StreamApp.ExitCode] =
     BlazeBuilder[IO]
-      .bindHttp(8080, "127.0.0.1")
+      .bindHttp(Port, Address)
       .mountService(service, "/")
       .serve
 }
