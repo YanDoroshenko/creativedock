@@ -1,9 +1,10 @@
-
 package com.github.yandoroshenko.creativedock
 
 import cats.effect.IO
 import fs2.StreamApp
+import io.circe._
 import org.http4s._
+import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.blaze.BlazeBuilder
 
@@ -21,7 +22,12 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
         log.info("List messages for " + group)
         Storage.listMessages(group) match {
           case Some(i) if i.nonEmpty =>
-            Ok(i.mkString("\n"))
+            Ok(
+              Json.obj(
+                "group" -> Json.fromString(group),
+                "messages" -> Json.fromValues(i.map(m => Json.fromString(m)))
+              )
+            )
           case _ =>
             NotFound("NOT FOUND")
         }
