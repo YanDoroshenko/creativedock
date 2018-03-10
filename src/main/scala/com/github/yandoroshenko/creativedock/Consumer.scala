@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Failure
@@ -17,11 +16,9 @@ import scala.util.Failure
   */
 trait Consumer extends Logger {
 
-  private final val PollTimeoutMs = 200
+  protected final val PollTimeoutMs = 200
 
   protected val topic: Topic
-
-  protected val storage: ListBuffer[ConsumerRecord[String, String]] = ListBuffer[ConsumerRecord[String, String]]()
 
   protected val consumer = KafkaConsumer(Conf(new StringDeserializer(), new StringDeserializer(), groupId = "group"))
 
@@ -30,11 +27,11 @@ trait Consumer extends Logger {
     consumer.subscribe(List[String](topic).asJava)
     Future {
       while (true)
-        storage ++= consumer.poll(PollTimeoutMs).iterator().asScala.toList
+        act(consumer.poll(PollTimeoutMs).iterator().asScala)
     }.onComplete {
       case Failure(e) => log.error(e.getLocalizedMessage(), e.getStackTrace().mkString("\n"))
     }
   }
 
-  def getMessages: ListBuffer[ConsumerRecord[String, String]] = storage
+  protected def act(i: Iterator[ConsumerRecord[String, String]])
 }
