@@ -7,13 +7,9 @@ sealed trait Topic {
   val name: String = getClass().getSimpleName().toLowerCase()
 }
 
-case class ListMessages() extends Topic
+case class Messages() extends Topic
 
-case class DeleteTopic() extends Topic
-
-case class CreateTopic() extends Topic
-
-case class PutMessage() extends Topic
+case class Groups() extends Topic
 
 object Topic {
   implicit def topic2String(topic: Topic): String = topic.name
