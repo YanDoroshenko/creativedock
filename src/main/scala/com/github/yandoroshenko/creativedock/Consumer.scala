@@ -26,8 +26,10 @@ trait Consumer extends Logger {
     log.info(String.format("Subscribing for topic %s", topic + ""))
     consumer.subscribe(List[String](topic).asJava)
     Future {
-      while (true)
+      while (true) {
+        log.debug("Polling topic %s", topic + "")
         act(consumer.poll(PollTimeoutMs).iterator().asScala)
+      }
     }.onComplete {
       case Failure(e) => log.error(e.getLocalizedMessage(), e.getStackTrace().mkString("\n"))
     }

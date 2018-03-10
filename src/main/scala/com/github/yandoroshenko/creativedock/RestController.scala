@@ -19,7 +19,7 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
   val service: HttpService[IO] = {
     HttpService[IO] {
       case GET -> Root / group / "messages" =>
-        log.info("List messages for " + group)
+        log.info("List messages for %s", group)
         Storage.listMessages(group) match {
           case Some(i) if i.nonEmpty =>
             Ok(

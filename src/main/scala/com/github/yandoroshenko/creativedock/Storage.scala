@@ -9,21 +9,30 @@ import scala.util.{Failure, Try}
 object Storage extends Logger {
   private val groups = mutable.Map[String, Seq[String]]()
 
-  def createGroup(name: String): Try[Unit] =
+  def createGroup(name: String): Unit =
     Try {
       groups.synchronized(groups(name) = Stream())
+    } match {
+      case Failure(e) => log.error(e.getLocalizedMessage(), e.getStackTrace().mkString("\n"))
+      case _ => log.info(String.format("Created group %s", name))
     }
 
-  def deleteGroup(name: String): Try[Unit] =
+  def deleteGroup(name: String): Unit =
     Try {
       groups.synchronized(groups -= name)
+    } match {
+      case Failure(e) => log.error(e.getLocalizedMessage(), e.getStackTrace().mkString("\n"))
+      case _ => log.info(String.format("Deleted group %s", name))
     }
 
-  def putMessage(group: String, message: String): Try[Unit] =
+  def putMessage(group: String, message: String): Unit =
     if (!groups.contains(group))
       Failure(new NoSuchElementException(String.format("Group %s does not exist", group)))
     else
-      Try(groups.synchronized(groups(group) = groups(group) :+ message))
+      Try(groups.synchronized(groups(group) = groups(group) :+ message)) match {
+        case Failure(e) => log.error(e.getLocalizedMessage(), e.getStackTrace().mkString("\n"))
+        case _ => log.info(String.format("Put message %s to group %s", message, group))
+      }
 
   def listMessages(group: String): Option[Seq[String]] =
     Option(groups.getOrElse(group, null))
