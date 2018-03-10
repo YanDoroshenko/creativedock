@@ -7,9 +7,7 @@ import org.http4s._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.blaze.BlazeBuilder
 
-import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.{Duration, _}
 
 object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
 
@@ -28,17 +26,11 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
             NotFound("NOT FOUND")
         }
       case PUT -> Root / group / "messages" / message =>
-        Await.result(
-          Producer.send(Messages(), group, message).map(_ => Ok()
-          ), Duration(RequestTimeoutMs, MILLISECONDS))
+        Ok(Producer.send(Messages(), group, message).map(_ => ""))
       case POST -> Root / group =>
-        Await.result(
-          Producer.send(Groups(), "create", group).map(_ => Ok()
-          ), Duration(RequestTimeoutMs, MILLISECONDS))
+        Ok(Producer.send(Groups(), "create", group).map(_ => ""))
       case DELETE -> Root / group =>
-        Await.result(
-          Producer.send(Groups(), "delete", group).map(_ => Ok()
-          ), Duration(RequestTimeoutMs, MILLISECONDS))
+        Ok(Producer.send(Groups(), "delete", group).map(_ => ""))
     }
   }
 
