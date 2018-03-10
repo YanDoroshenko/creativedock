@@ -24,7 +24,7 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
           case Some(i) if i.nonEmpty =>
             Ok(
               Json.obj(
-                "group" -> Json.fromString(group),
+                "name" -> Json.fromString(group),
                 "messages" -> Json.fromValues(i.map(m => Json.fromString(m)))
               )
             )
