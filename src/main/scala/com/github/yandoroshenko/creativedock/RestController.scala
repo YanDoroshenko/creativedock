@@ -42,7 +42,7 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
 
   def stream(args: List[String], requestShutdown: IO[Unit]): fs2.Stream[IO, StreamApp.ExitCode] = {
     MessagesConsumer
-    TopicConsumer
+    GroupConsumer
     BlazeBuilder[IO]
       .bindHttp(Port, Address)
       .mountService(service, "/groups")
