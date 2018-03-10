@@ -31,10 +31,27 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
           case _ =>
             NotFound("NOT FOUND")
         }
-      case PUT -> Root / group / "messages" / message =>
-        Ok(Producer.send(Messages(), group, message).map(_ => ""))
-      case POST -> Root / group =>
-        Ok(Producer.send(Groups(), "create", group).map(_ => ""))
+
+      case req @ PUT -> Root / group / "messages" =>
+        req.as[Json].map(_ \\ "message").flatMap {
+          case l if l.nonEmpty =>
+            l.head.asString match {
+              case Some(message) => Ok(Producer.send(Messages(), group, message).map(_ => ""))
+              case _ => BadRequest("Message must be a string")
+            }
+          case _ => BadRequest("Request should contain a message")
+        }
+
+      case req @ POST -> Root =>
+        req.as[Json].map(_ \\ "name").flatMap {
+          case l if l.nonEmpty =>
+            l.head.asString match {
+              case Some(name) => Ok(Producer.send(Groups(), "create", name).map(_ => ""))
+              case _ => BadRequest("Group name must be a string")
+            }
+          case _ => BadRequest("Request should contain a new group's name")
+        }
+
       case DELETE -> Root / group =>
         Ok(Producer.send(Groups(), "delete", group).map(_ => ""))
     }
