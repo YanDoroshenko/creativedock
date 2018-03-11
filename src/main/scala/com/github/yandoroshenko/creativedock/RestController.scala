@@ -39,7 +39,7 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
           case l if l.nonEmpty =>
             l.head.asString match {
               case Some(message) =>
-                log.info("Add message %s to group %s", message, group)
+                log.info("Add message %s to group %s", Array(message, group))
                 Ok(Producer.send(Messages(), group, message).map(_ => ""))
               case _ => BadRequest("Message must be a string")
             }
