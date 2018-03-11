@@ -19,7 +19,7 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
   val service: HttpService[IO] = {
     HttpService[IO] {
       case GET -> Root / group / "messages" =>
-        log.info("List messages for %s", group)
+        log.info(String.format("List messages for %s", group))
         Storage.listMessages(group) match {
           case Some(i) if i.nonEmpty =>
             Ok(
@@ -36,7 +36,9 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
         req.as[Json].map(_ \\ "message").flatMap {
           case l if l.nonEmpty =>
             l.head.asString match {
-              case Some(message) => Ok(Producer.send(Messages(), group, message).map(_ => ""))
+              case Some(message) =>
+                log.info("Add message %s to group %s", message, group)
+                Ok(Producer.send(Messages(), group, message).map(_ => ""))
               case _ => BadRequest("Message must be a string")
             }
           case _ => BadRequest("Request should contain a message")
@@ -46,13 +48,16 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
         req.as[Json].map(_ \\ "name").flatMap {
           case l if l.nonEmpty =>
             l.head.asString match {
-              case Some(name) => Ok(Producer.send(Groups(), "create", name).map(_ => ""))
+              case Some(name) =>
+                log.info(String.format("Create group %s", name))
+                Ok(Producer.send(Groups(), "create", name).map(_ => "Request accepted"))
               case _ => BadRequest("Group name must be a string")
             }
           case _ => BadRequest("Request should contain a new group's name")
         }
 
       case DELETE -> Root / group =>
+        log.info(String.format("Delete group %s", group))
         Ok(Producer.send(Groups(), "delete", group).map(_ => ""))
     }
   }
