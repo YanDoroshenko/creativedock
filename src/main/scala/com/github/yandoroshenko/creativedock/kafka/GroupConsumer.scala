@@ -1,5 +1,7 @@
-package com.github.yandoroshenko.creativedock
+package com.github.yandoroshenko.creativedock.kafka
 
+import com.github.yandoroshenko.creativedock.util.Storage
+import com.github.yandoroshenko.creativedock.{Groups, Topic}
 import org.apache.kafka.clients.consumer.ConsumerRecord
 
 /**

@@ -1,8 +1,10 @@
-package com.github.yandoroshenko.creativedock
+package com.github.yandoroshenko.creativedock.kafka
 
 import cakesolutions.kafka.KafkaProducer
 import cakesolutions.kafka.KafkaProducer.Conf
+import com.github.yandoroshenko.creativedock.Topic
 import com.github.yandoroshenko.creativedock.Topic._
+import com.github.yandoroshenko.creativedock.util.Logger
 import org.apache.kafka.clients.producer.{ProducerRecord, RecordMetadata}
 
 import scala.concurrent.Future

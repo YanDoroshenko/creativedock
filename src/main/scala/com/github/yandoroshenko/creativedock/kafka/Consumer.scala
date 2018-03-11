@@ -1,8 +1,10 @@
-package com.github.yandoroshenko.creativedock
+package com.github.yandoroshenko.creativedock.kafka
 
 import cakesolutions.kafka.KafkaConsumer
 import cakesolutions.kafka.KafkaConsumer.Conf
+import com.github.yandoroshenko.creativedock.Topic
 import com.github.yandoroshenko.creativedock.Topic._
+import com.github.yandoroshenko.creativedock.util.Logger
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 

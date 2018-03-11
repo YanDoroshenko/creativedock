@@ -1,4 +1,4 @@
-package com.github.yandoroshenko.creativedock
+package com.github.yandoroshenko.creativedock.util
 
 import org.slf4j.LoggerFactory
 

@@ -1,6 +1,8 @@
 package com.github.yandoroshenko.creativedock
 
 import cats.effect.IO
+import com.github.yandoroshenko.creativedock.kafka.{GroupConsumer, MessagesConsumer, Producer}
+import com.github.yandoroshenko.creativedock.util.{Logger, Storage}
 import fs2.StreamApp
 import io.circe._
 import org.http4s._
