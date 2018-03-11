@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
 
   private final val Address = "127.0.0.1"
-  private final val Port = 8080
+  private final val Port = 443
   private final val RequestTimeoutMs = 1000
 
   val service: HttpService[IO] = {
