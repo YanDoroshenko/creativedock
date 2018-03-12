@@ -18,7 +18,7 @@ import scala.util.Failure
   */
 trait Consumer extends Logger {
 
-  protected final val PollTimeoutMs = 200
+  protected def PollTimeoutMs = 200
 
   protected val topic: Topic
 
@@ -30,10 +30,11 @@ trait Consumer extends Logger {
     Future {
       while (true) {
         log.debug("Polling topic %s", topic + "")
-        act(consumer.poll(PollTimeoutMs).iterator().asScala)
+        act(consumer.poll(PollTimeoutMs).iterator.asScala)
       }
     }.onComplete {
       case Failure(e) => log.error(e.getLocalizedMessage(), e.getStackTrace().mkString("\n"))
+      case _ => ()
     }
   }
 

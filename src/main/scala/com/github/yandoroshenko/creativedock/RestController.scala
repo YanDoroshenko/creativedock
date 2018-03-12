@@ -14,8 +14,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
 
+  // FIXME should be in application.conf
   private final val Address = "127.0.0.1"
+
+  // FIXME should be in application.conf
   private final val Port = 443
+
+  // FIXME should be in application.conf
   private final val RequestTimeoutMs = 1000
 
   val service: HttpService[IO] = {
@@ -23,11 +28,13 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
       case GET -> Root / group / "messages" =>
         log.info(String.format("List messages for %s", group))
         Storage.listMessages(group) match {
-          case Some(i) if i.nonEmpty =>
+          // INFO removed nonEmpty check, "no-event in group" (200 []) is different from
+          // non-existant group (404)
+          case Some(i) =>
             Ok(
               Json.obj(
                 "name" -> Json.fromString(group),
-                "messages" -> Json.fromValues(i.map(m => Json.fromString(m)))
+                "messages" -> Json.fromValues(i.map(Json.fromString))
               )
             )
           case _ =>
@@ -40,6 +47,9 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
             l.head.asString match {
               case Some(message) =>
                 log.info("Add message %s to group %s", Array(message, group))
+                // FIXME disliking that you don't wait for ACK from kafka and just report 200 OK
+                // at least return 201 (Accepted) if you ignore acknowledgment,
+                // but you should acknowledge that event was added to group
                 Ok(Producer.send(Messages(), group, message).map(_ => ""))
               case _ => BadRequest("Message must be a string")
             }
@@ -52,6 +62,9 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
             l.head.asString match {
               case Some(name) =>
                 log.info(String.format("Create group %s", name))
+                // FIXME disliking that you don't wait for ACK from kafka and just report 200 OK
+                // at least return 201 (Accepted) if you ignore acknowledgment,
+                // but you should acknowledge that group was created
                 Ok(Producer.send(Groups(), "create", name).map(_ => "Request accepted"))
               case _ => BadRequest("Group name must be a string")
             }
@@ -60,6 +73,9 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
 
       case DELETE -> Root / group =>
         log.info(String.format("Delete group %s", group))
+        // FIXME disliking that you don't wait for ACK from kafka and just report 200 OK
+        // at least return 201 (Accepted) if you ignore acknowledgment,
+        // but you should acknowledge that group was deleted
         Ok(Producer.send(Groups(), "delete", group).map(_ => ""))
     }
   }
@@ -68,7 +84,7 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
     MessagesConsumer
     GroupConsumer
     BlazeBuilder[IO]
-      .bindHttp(Port, Address)
+      .bindHttp(Port, Address) // FIXME is this really https secured or plaintext bind to :443 ?
       .mountService(service, "/groups")
       .serve
   }
