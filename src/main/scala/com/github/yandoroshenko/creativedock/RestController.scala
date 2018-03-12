@@ -41,7 +41,7 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger with 
                 // FIXME disliking that you don't wait for ACK from kafka and just report 200 OK
                 // at least return 201 (Accepted) if you ignore acknowledgment,
                 // but you should acknowledge that event was added to group
-                Ok(Producer.send(Messages(), group, message).map(_ => ""))
+                Accepted(Producer.send(Messages(), group, message).map(_ => ""))
               case _ => BadRequest("Message must be a string")
             }
           case _ => BadRequest("Request should contain a message")
@@ -56,7 +56,7 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger with 
                 // FIXME disliking that you don't wait for ACK from kafka and just report 200 OK
                 // at least return 201 (Accepted) if you ignore acknowledgment,
                 // but you should acknowledge that group was created
-                Ok(Producer.send(Groups(), "create", name).map(_ => "Request accepted"))
+                Accepted(Producer.send(Groups(), "create", name).map(_ => "Request accepted"))
               case _ => BadRequest("Group name must be a string")
             }
           case _ => BadRequest("Request should contain a new group's name")
@@ -67,7 +67,7 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger with 
         // FIXME disliking that you don't wait for ACK from kafka and just report 200 OK
         // at least return 201 (Accepted) if you ignore acknowledgment,
         // but you should acknowledge that group was deleted
-        Ok(Producer.send(Groups(), "delete", group).map(_ => ""))
+        Accepted(Producer.send(Groups(), "delete", group).map(_ => ""))
     }
   }
 
