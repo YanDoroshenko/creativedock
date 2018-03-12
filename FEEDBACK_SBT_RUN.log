@@ -1,3 +1,5 @@
+### Application fails to start because of inability to bind the system port (443). Sbt has to be run with superuser rights ###
+
 $ sbt run
 [info] Loading settings from plugins.sbt ...
 [info] Loading project definition from /Users/jancajthaml/Repositories/CreativeDocs-PRS/creativedock/project
