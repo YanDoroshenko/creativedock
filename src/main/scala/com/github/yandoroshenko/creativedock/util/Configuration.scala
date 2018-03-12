@@ -16,4 +16,10 @@ trait Configuration {
   protected val RequestTimeoutMs: Int = config.getInt("rest.requestTimeoutMs")
 
   protected val PollTimeoutMs: Int = config.getInt("kafka.pollTimeoutMs")
+
+  protected val KeystorePath: String = config.getString("ssl.keystorePath")
+
+  protected val KeystorePassword: String = config.getString("ssl.keystorePassword")
+
+  protected val Protocol: String = config.getString("ssl.protocol")
 }

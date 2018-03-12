@@ -8,6 +8,7 @@ import io.circe._
 import org.http4s._
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
+import org.http4s.server.SSLKeyStoreSupport.StoreInfo
 import org.http4s.server.blaze.BlazeBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -82,8 +83,9 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger with 
     MessagesConsumer
     GroupConsumer
     BlazeBuilder[IO]
-      .bindHttp(Port, Address) // FIXME is this really https secured or plaintext bind to :443 ?
+      .bindHttp(Port, Address)
       .mountService(service, "/groups")
+      .withSSL(StoreInfo(KeystorePath, KeystorePassword), KeystorePassword)
       .serve
   }
 }
