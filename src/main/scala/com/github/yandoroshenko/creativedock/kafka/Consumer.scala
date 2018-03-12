@@ -28,7 +28,7 @@ trait Consumer extends Logger with Configuration {
     consumer.subscribe(Collections.singletonList(topic + ""))
     Future {
       while (true) {
-        log.debug("Polling topic %s", topic + "")
+        log.debug(String.format("Polling topic %s", topic + ""))
         act(consumer.poll(PollTimeoutMs).iterator)
       }
     }.onComplete {
