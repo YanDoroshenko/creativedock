@@ -1,5 +1,7 @@
 package com.github.yandoroshenko.creativedock.kafka
 
+import java.util.{Iterator => JIterator}
+
 import com.github.yandoroshenko.creativedock.util.Storage
 import com.github.yandoroshenko.creativedock.{Groups, Topic}
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -12,8 +14,8 @@ object GroupConsumer extends Consumer {
 
   watch
 
-  override protected def act(i: Iterator[ConsumerRecord[String, String]]): Unit =
-    i.foreach(r => r.key() match {
+  override protected def act(i: JIterator[ConsumerRecord[String, String]]): Unit =
+    i.forEachRemaining(r => r.key() match {
       case "create" => Storage.createGroup(r.value())
       case "delete" => Storage.deleteGroup(r.value())
     })

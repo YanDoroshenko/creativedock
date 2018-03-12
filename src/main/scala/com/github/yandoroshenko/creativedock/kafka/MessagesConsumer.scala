@@ -1,5 +1,7 @@
 package com.github.yandoroshenko.creativedock.kafka
 
+import java.util.{Iterator => JIterator}
+
 import com.github.yandoroshenko.creativedock.util.Storage
 import com.github.yandoroshenko.creativedock.{Messages, Topic}
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -12,6 +14,6 @@ object MessagesConsumer extends Consumer {
 
   watch
 
-  override protected def act(i: Iterator[ConsumerRecord[String, String]]): Unit =
-    i.foreach(r => Storage.putMessage(r.key(), r.value()))
+  override protected def act(i: JIterator[ConsumerRecord[String, String]]): Unit =
+    i.forEachRemaining(r => Storage.putMessage(r.key(), r.value()))
 }

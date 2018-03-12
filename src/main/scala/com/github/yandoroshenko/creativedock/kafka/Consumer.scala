@@ -1,5 +1,7 @@
 package com.github.yandoroshenko.creativedock.kafka
 
+import java.util.{Collections, Iterator => JIterator}
+
 import cakesolutions.kafka.KafkaConsumer
 import cakesolutions.kafka.KafkaConsumer.Conf
 import com.github.yandoroshenko.creativedock.Topic
@@ -8,7 +10,6 @@ import com.github.yandoroshenko.creativedock.util.{Configuration, Logger}
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 
-import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Failure
@@ -24,11 +25,11 @@ trait Consumer extends Logger with Configuration {
 
   protected def watch: Unit = {
     log.info(String.format("Subscribing for topic %s", topic + ""))
-    consumer.subscribe(List[String](topic).asJava)
+    consumer.subscribe(Collections.singletonList(topic + ""))
     Future {
       while (true) {
         log.debug("Polling topic %s", topic + "")
-        act(consumer.poll(PollTimeoutMs).iterator.asScala)
+        act(consumer.poll(PollTimeoutMs).iterator)
       }
     }.onComplete {
       case Failure(e) => log.error(e.getLocalizedMessage(), e.getStackTrace().mkString("\n"))
@@ -36,5 +37,5 @@ trait Consumer extends Logger with Configuration {
     }
   }
 
-  protected def act(i: Iterator[ConsumerRecord[String, String]])
+  protected def act(i: JIterator[ConsumerRecord[String, String]])
 }
