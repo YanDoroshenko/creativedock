@@ -72,6 +72,12 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger with 
   }
 
   def stream(args: List[String], requestShutdown: IO[Unit]): fs2.Stream[IO, StreamApp.ExitCode] = {
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      override def run(): Unit = {
+        log.warn("Shutting down")
+        Producer.close
+      }
+    })
     MessagesConsumer
     GroupConsumer
     BlazeBuilder[IO]
