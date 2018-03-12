@@ -4,7 +4,7 @@ import cakesolutions.kafka.KafkaConsumer
 import cakesolutions.kafka.KafkaConsumer.Conf
 import com.github.yandoroshenko.creativedock.Topic
 import com.github.yandoroshenko.creativedock.Topic._
-import com.github.yandoroshenko.creativedock.util.Logger
+import com.github.yandoroshenko.creativedock.util.{Configuration, Logger}
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 
@@ -16,9 +16,7 @@ import scala.util.Failure
 /**
   * Created by Yan Doroshenko (yandoroshenko@protonmail.com) on 08.03.2018.
   */
-trait Consumer extends Logger {
-
-  protected def PollTimeoutMs = 200
+trait Consumer extends Logger with Configuration {
 
   protected val topic: Topic
 

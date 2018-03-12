@@ -2,7 +2,7 @@ package com.github.yandoroshenko.creativedock
 
 import cats.effect.IO
 import com.github.yandoroshenko.creativedock.kafka.{GroupConsumer, MessagesConsumer, Producer}
-import com.github.yandoroshenko.creativedock.util.{Logger, Storage}
+import com.github.yandoroshenko.creativedock.util.{Configuration, Logger, Storage}
 import fs2.StreamApp
 import io.circe._
 import org.http4s._
@@ -12,16 +12,7 @@ import org.http4s.server.blaze.BlazeBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger {
-
-  // FIXME should be in application.conf
-  private final val Address = "127.0.0.1"
-
-  // FIXME should be in application.conf
-  private final val Port = 443
-
-  // FIXME should be in application.conf
-  private final val RequestTimeoutMs = 1000
+object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger with Configuration {
 
   val service: HttpService[IO] = {
     HttpService[IO] {
