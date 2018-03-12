@@ -13,5 +13,5 @@ object MessagesConsumer extends Consumer {
   watch
 
   override protected def act(i: Iterator[ConsumerRecord[String, String]]): Unit =
-    i.foreach((r) => Storage.putMessage(r.key(), r.value()))
+    i.foreach(r => Storage.putMessage(r.key(), r.value()))
 }

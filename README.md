@@ -53,7 +53,7 @@ Simple REST + Apache Kafka CRUD application
    ]
 }
 ```
-##### Messages not found (group does not exist or has no messages)
+##### Messages not found (group does not exist)
 ###### Status
 ```
 404 NOT FOUND
