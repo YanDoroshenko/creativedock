@@ -15,7 +15,7 @@ Simple REST + Apache Kafka CRUD application
 ```
 #### Response
 ```
-200 OK // Since we can't be sure that the group was actually created
+202 ACCEPTED // Since we can't be sure that the group was actually created
 ```
 ### Add message to a group
 #### Endpoint:
@@ -30,7 +30,7 @@ Simple REST + Apache Kafka CRUD application
 ```
 #### Response
 ```
-200 OK // Since we can't be sure that the message was actually added
+202 ACCEPTED // Since we can't be sure that the message was actually added
 ```
 ### List messages for a group
 #### Endpoint:
@@ -65,5 +65,5 @@ Simple REST + Apache Kafka CRUD application
 `DELETE`
 #### Response
 ```
-200 OK // Since we can't be sure that the group was actually deleted
+202 ACCEPTED // Since we can't be sure that the group was actually deleted
 ```
