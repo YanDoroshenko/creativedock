@@ -8,37 +8,39 @@ import scala.util.{Failure, Try}
   */
 object Storage extends Logger {
 
-  private val groups = mutable.Map[String, Seq[String]]()
+  val groups: mutable.Map[String, Seq[String]] = mutable.Map[String, Seq[String]]()
 
-  // INFO dislike that you are ignoring Try here and returning Unit in either case
-  // makes chaining harder
-  def createGroup(name: String): Unit =
-    Try {
-      groups.synchronized(groups(name) = Stream())
-    } match {
-      case Failure(e) => log.error(e.getLocalizedMessage(), e.getStackTrace().mkString("\n"))
-      case _ => log.info(String.format("Created group %s", name))
+  def createGroup(name: String): Try[String] =
+    if (groups.contains(name)) {
+      Failure(new IllegalArgumentException(String.format("Group %s already exists", name)))
+    }
+    else {
+      Try {
+        groups.synchronized(groups(name) = Stream())
+        name
+      }
     }
 
-  // INFO dislike that you are ignoring Try here and returning Unit in either case
-  // makes chaining harder
-  def deleteGroup(name: String): Unit =
-    Try {
-      groups.synchronized(groups -= name)
-    } match {
-      case Failure(e) => log.error(e.getLocalizedMessage(), e.getStackTrace().mkString("\n"))
-      case _ => log.info(String.format("Deleted group %s", name))
+  def deleteGroup(name: String): Try[String] =
+    if (!groups.contains(name)) {
+      Failure(new NoSuchElementException(String.format("Group %s does not exist", name)))
+    }
+    else {
+      Try {
+        groups.synchronized(groups -= name)
+        name
+      }
     }
 
-  // INFO dislike that you are ignoring Try here and returning Unit in either case
-  // makes chaining harder
-  def putMessage(group: String, message: String): Unit =
+
+  def putMessage(group: String, message: String): Try[(String, String)] =
     if (!groups.contains(group)) {
       Failure(new NoSuchElementException(String.format("Group %s does not exist", group)))
-    } else {
-      Try(groups.synchronized(groups(group) = groups(group) :+ message)) match {
-        case Failure(e) => log.error(e.getLocalizedMessage(), e.getStackTrace().mkString("\n"))
-        case _ => log.info(String.format("Put message %s to group %s", message, group))
+    }
+    else {
+      Try {
+        groups.synchronized(groups(group) = groups(group) :+ message)
+        group -> message
       }
     }
 
