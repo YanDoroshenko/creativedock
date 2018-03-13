@@ -38,7 +38,7 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger with 
           case l if l.nonEmpty =>
             l.head.asString match {
               case Some(message) =>
-                log.info("Add message %s to group %s", Array(message, group))
+                log.info(String.format("Add message %s to group %s", message, group))
                 // FIXME disliking that you don't wait for ACK from kafka and just report 200 OK
                 // at least return 201 (Accepted) if you ignore acknowledgment,
                 // but you should acknowledge that event was added to group
