@@ -16,4 +16,5 @@ libraryDependencies ++=
     "org.http4s" %% "http4s-dsl" % http4sVersion ::
     "io.circe" %% "circe-generic" % "0.9.1" ::
     "io.circe" %% "circe-literal" % "0.9.1" ::
+    "org.scalatest" %% "scalatest" % "3.0.5" % "test" ::
     Nil
