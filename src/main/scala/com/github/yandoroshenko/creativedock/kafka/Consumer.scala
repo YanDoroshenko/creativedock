@@ -45,4 +45,6 @@ trait Consumer extends Logger with Configuration {
   }
 
   protected def act(i: JIterator[ConsumerRecord[String, String]])
+
+  def close: Unit = consumer.close()
 }

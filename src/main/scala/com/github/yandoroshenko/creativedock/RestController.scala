@@ -78,6 +78,8 @@ object RestController extends StreamApp[IO] with Http4sDsl[IO] with Logger with 
         override def run(): Unit = {
           log.warn("Shutting down")
           Producer.close
+          GroupConsumer.close
+          MessagesConsumer.close
         }
       })
     MessagesConsumer
