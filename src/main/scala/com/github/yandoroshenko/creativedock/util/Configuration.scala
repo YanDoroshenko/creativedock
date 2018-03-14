@@ -22,4 +22,6 @@ trait Configuration {
   protected val KeystorePassword: String = config.getString("ssl.keystorePassword")
 
   protected val Protocol: String = config.getString("ssl.protocol")
+
+  protected val BrokerAddress: String = config.getString("kafka.brokerAddress")
 }

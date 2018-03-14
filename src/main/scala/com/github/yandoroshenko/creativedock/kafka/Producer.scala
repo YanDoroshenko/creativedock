@@ -19,7 +19,11 @@ import org.apache.kafka.common.serialization.StringSerializer
 object Producer extends Logger with Configuration {
 
   protected val producer = KafkaProducer(
-    Conf(new StringSerializer(), new StringSerializer(), bootstrapServers = "localhost:9092")
+    Conf(
+      new StringSerializer(),
+      new StringSerializer(),
+      bootstrapServers = BrokerAddress,
+    )
   )
 
   def send(topic: Topic, k: String, v: String): Future[RecordMetadata] = {
